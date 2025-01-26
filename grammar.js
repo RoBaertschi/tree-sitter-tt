@@ -15,7 +15,7 @@ module.exports = grammar({
     _declaration: $ => choice($.function_declaration),
     function_declaration: $ => seq(
       "fn",
-      $.identifier,
+      field("name", $.identifier),
       "(",
       ")",
       "=",
