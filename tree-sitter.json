@@ -1,0 +1,33 @@
+{
+  "grammars": [
+    {
+      "name": "tt",
+      "camelcase": "tt",
+      "scope": "source.tt",
+      "path": ".",
+      "file-types": null,
+      "injection-regex": "^tt$"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT",
+    "description": "tt",
+    "authors": [
+      {
+        "name": "RoBaertschi"
+      }
+    ],
+    "links": {
+      "repository": "https://github.com/RoBaertschi/tree-sitter-tt"
+    }
+  },
+  "bindings": {
+    "c": true,
+    "go": true,
+    "node": true,
+    "python": true,
+    "rust": true,
+    "swift": true
+  }
+}
