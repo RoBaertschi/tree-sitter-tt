@@ -1,8 +1,10 @@
 [
- "fn"
  "true"
  "false"
  ] @keyword
+
+
+"fn" @keyword.function
 
 [
  "=="
