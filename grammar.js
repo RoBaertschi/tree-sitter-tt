@@ -23,7 +23,7 @@ module.exports = grammar({
       ";",
     ),
     identifier: _ => /[a-zA-Z][a-zA-Z0-9]*/,
-    _expression: $ => choice($.number, $.boolean, $.binary_expression, $.grouped_expression, $.block_expression),
+    _expression: $ => choice($.number, $.boolean, $.binary_expression, $.grouped_expression, $.block_expression, $.if_expression),
     number: _ => /[0-9]+/,
     boolean: _ => choice("true", "false"),
     binary_expression: $ => choice(
@@ -40,5 +40,11 @@ module.exports = grammar({
     ),
     grouped_expression: $ => seq("(", $._expression, ")"),
     block_expression: $ => seq("{", repeat(seq($._expression, ";")), field("return_expression", optional($._expression)), "}"),
+    if_expression: $ => prec.left(seq(
+      "if",
+      field("condition", $._expression),
+      choice(seq("in", field("then", $._expression)), field("then", $.block_expression)),
+      field("else", optional(seq("else", $._expression)))
+    )),
   }
 });
