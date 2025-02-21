@@ -7,6 +7,12 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
+const PrecLowest = 0;
+const PrecComparison = 1;
+const PrecSum = 2;
+const PrecProduct = 3;
+const PrecAssignment = 4;
+
 module.exports = grammar({
   name: "tt",
 
@@ -23,21 +29,24 @@ module.exports = grammar({
       ";",
     ),
     identifier: _ => /[a-zA-Z][a-zA-Z0-9]*/,
-    _expression: $ => choice($.number, $.boolean, $.binary_expression, $.grouped_expression, $.block_expression, $.if_expression),
+    _expression: $ => choice($.number, $.boolean, $.binary_expression, $.grouped_expression, $.block_expression, $.if_expression, $.variable_reference, $.variable_declaration, $.assignment_expression),
     number: _ => /[0-9]+/,
     boolean: _ => choice("true", "false"),
     binary_expression: $ => choice(
-      prec.left(1, seq($._expression, field("operator", "!="), $._expression)),
-      prec.left(1, seq($._expression, field("operator", "=="), $._expression)),
-      prec.left(1, seq($._expression, field("operator", "<"), $._expression)),
-      prec.left(1, seq($._expression, field("operator", "<="), $._expression)),
-      prec.left(1, seq($._expression, field("operator", ">"), $._expression)),
-      prec.left(1, seq($._expression, field("operator", ">="), $._expression)),
-      prec.left(2, seq($._expression, field("operator", "+"), $._expression)),
-      prec.left(2, seq($._expression, field("operator", "-"), $._expression)),
-      prec.left(3, seq($._expression, field("operator", "*"), $._expression)),
-      prec.left(3, seq($._expression, field("operator", "/"), $._expression)),
+      prec.left(PrecComparison, seq($._expression, field("operator", "!="), $._expression)),
+      prec.left(PrecComparison, seq($._expression, field("operator", "=="), $._expression)),
+      prec.left(PrecComparison, seq($._expression, field("operator", "<"), $._expression)),
+      prec.left(PrecComparison, seq($._expression, field("operator", "<="), $._expression)),
+      prec.left(PrecComparison, seq($._expression, field("operator", ">"), $._expression)),
+      prec.left(PrecComparison, seq($._expression, field("operator", ">="), $._expression)),
+      prec.left(PrecSum, seq($._expression, field("operator", "+"), $._expression)),
+      prec.left(PrecSum, seq($._expression, field("operator", "-"), $._expression)),
+      prec.left(PrecProduct, seq($._expression, field("operator", "*"), $._expression)),
+      prec.left(PrecProduct, seq($._expression, field("operator", "/"), $._expression)),
     ),
+    assignment_expression: $ => prec.left(PrecAssignment, seq(field("lhs", $._expression), "=", field("rhs", $._expression))),
+    variable_reference: $ => $.identifier,
+    variable_declaration: $ => seq(field("name", $.identifier), ":", field("type", optional($.identifier)), "=", field("initializing_expression", $._expression)),
     grouped_expression: $ => seq("(", $._expression, ")"),
     block_expression: $ => seq("{", repeat(seq($._expression, ";")), field("return_expression", optional($._expression)), "}"),
     if_expression: $ => prec.left(seq(
