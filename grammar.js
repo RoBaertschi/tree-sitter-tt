@@ -15,6 +15,7 @@ const PrecAssignment = 4;
 
 module.exports = grammar({
   name: "tt",
+  extras: $ => [$.comment, /\s/],
 
   rules: {
     program: $ => repeat($._declaration),
@@ -56,5 +57,6 @@ module.exports = grammar({
       choice(seq("in", field("then", $._expression)), field("then", $.block_expression)),
       field("else", optional(seq("else", $._expression)))
     )),
+    comment: _ => token(seq("//", /[^\n]*/)),
   }
 });
