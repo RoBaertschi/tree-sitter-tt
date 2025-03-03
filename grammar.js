@@ -17,7 +17,7 @@ module.exports = grammar({
   name: "tt",
 
   rules: {
-    program: $ => $._declaration,
+    program: $ => repeat($._declaration),
     _declaration: $ => choice($.function_declaration),
     function_declaration: $ => seq(
       "fn",

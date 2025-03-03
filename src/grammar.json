@@ -3,8 +3,11 @@
   "name": "tt",
   "rules": {
     "program": {
-      "type": "SYMBOL",
-      "name": "_declaration"
+      "type": "REPEAT",
+      "content": {
+        "type": "SYMBOL",
+        "name": "_declaration"
+      }
     },
     "_declaration": {
       "type": "CHOICE",
@@ -399,12 +402,8 @@
       }
     },
     "variable_reference": {
-      "type": "FIELD",
-      "name": "identifier",
-      "content": {
-        "type": "SYMBOL",
-        "name": "identifier"
-      }
+      "type": "SYMBOL",
+      "name": "identifier"
     },
     "variable_declaration": {
       "type": "SEQ",
