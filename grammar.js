@@ -23,17 +23,17 @@ module.exports = grammar({
     function_declaration: $ => seq(
       "fn",
       field("name", $.identifier),
-      $.argument_list,
+      $.parameter_list,
       ":",
       field("return_type", $.type),
       "=",
       $._expression,
       ";",
     ),
-    argument: $ => seq(field("name", $.identifier), ":", field("type", $.identifier)),
-    argument_list: $ => seq("(", optional(seq($.argument, repeat(seq(",", $.argument)))), optional(","), ")"),
+    parameter: $ => seq(field("name", $.identifier), ":", field("type", $.identifier)),
+    parameter_list: $ => seq("(", optional(seq($.parameter, repeat(seq(",", $.parameter)))), optional(","), ")"),
     identifier: _ => /[a-zA-Z][a-zA-Z0-9]*/,
-    _expression: $ => choice($.number, $.boolean, $.binary_expression, $.grouped_expression, $.block_expression, $.if_expression, $.variable_reference, $.variable_declaration, $.assignment_expression),
+    _expression: $ => choice($.number, $.boolean, $.binary_expression, $.grouped_expression, $.block_expression, $.if_expression, $.variable_reference, $.variable_declaration, $.assignment_expression, $.function_call),
     number: _ => /[0-9]+/,
     boolean: _ => choice("true", "false"),
     binary_expression: $ => choice(
@@ -59,6 +59,8 @@ module.exports = grammar({
       choice(seq("in", field("then", $._expression)), field("then", $.block_expression)),
       field("else", optional(seq("else", $._expression)))
     )),
+    argument_list: $ => seq("(", optional(seq($._expression, repeat(seq(",", $._expression)))), optional(","), ")"),
+    function_call: $ => seq(field("function_name", $.identifier), $.argument_list),
     comment: _ => token(seq("//", /[^\n]*/)),
     type: $ => $.identifier,
   }
