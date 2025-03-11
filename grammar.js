@@ -24,6 +24,8 @@ module.exports = grammar({
       "fn",
       field("name", $.identifier),
       $.argument_list,
+      ":",
+      field("return_type", $.type),
       "=",
       $._expression,
       ";",
@@ -48,7 +50,7 @@ module.exports = grammar({
     ),
     assignment_expression: $ => prec.left(PrecAssignment, seq(field("lhs", $._expression), "=", field("rhs", $._expression))),
     variable_reference: $ => $.identifier,
-    variable_declaration: $ => seq(field("name", $.identifier), ":", field("type", optional($.identifier)), "=", field("initializing_expression", $._expression)),
+    variable_declaration: $ => seq(field("name", $.identifier), ":", field("type", optional($.type)), "=", field("initializing_expression", $._expression)),
     grouped_expression: $ => seq("(", $._expression, ")"),
     block_expression: $ => seq("{", repeat(seq($._expression, ";")), field("return_expression", optional($._expression)), "}"),
     if_expression: $ => prec.left(seq(
@@ -58,5 +60,6 @@ module.exports = grammar({
       field("else", optional(seq("else", $._expression)))
     )),
     comment: _ => token(seq("//", /[^\n]*/)),
+    type: $ => $.identifier,
   }
 });
